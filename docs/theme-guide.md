@@ -42,6 +42,7 @@ vite.config.ts
 | `VerifyEmailPage`                             | 邮箱验证页                               |
 | `ProfilePage`                                 | 个人资料页                               |
 | `config`                                      | 主题静态配置（数据获取参数与预加载配置） |
+| `getDocumentStyle`                            | 可选：向 document 根节点注入主题样式变量 |
 | `Toaster`                                     | Toast 通知组件（Sonner 封装）            |
 
 > **骨架屏（Skeleton）**：用作 TanStack Router 的 `pendingComponent`，在页面数据请求期间展示的过渡 UI。主题可以根据自身的交互设计语言自行决定是否需要实现它（例如，为了配合某些入场动画，您可以选择直接返回 `null` 而不渲染占位图）。
@@ -229,6 +230,7 @@ export function HomePageSkeleton() {
 
 ```ts
 // src/features/theme/themes/my-theme/index.ts
+import type { SiteConfig } from "@/features/config/site-config.schema";
 import type { ThemeComponents } from "@/features/theme/contract/components";
 import { config } from "./config";
 import { PublicLayout } from "./layouts/public-layout";
@@ -240,6 +242,7 @@ import Toaster from "@/components/ui/toaster";
 
 export default {
   config,
+  getDocumentStyle: (_siteConfig: SiteConfig) => undefined,
   PublicLayout,
   AuthLayout,
   UserLayout,
@@ -249,6 +252,8 @@ export default {
   // ... 其余组件
 } satisfies ThemeComponents;
 ```
+
+如果主题需要把运行时配置映射成 CSS 变量（例如把 `siteConfig` 中的主题色注入到 `<html>`），可以实现 `getDocumentStyle`；不需要时直接返回 `undefined` 即可。
 
 如果遗漏了任何必须的组件，TypeScript 会在此处报错，明确指出缺少哪个字段。
 

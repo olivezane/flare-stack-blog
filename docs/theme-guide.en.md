@@ -42,6 +42,7 @@ The `ThemeComponents` interface lists all the components a theme must export. Yo
 | `VerifyEmailPage`                             | Email verification page                                       |
 | `ProfilePage`                                 | User profile page                                             |
 | `config`                                      | Static theme config (data fetching params and preload config) |
+| `getDocumentStyle`                            | Optional: inject theme style variables onto the document root |
 | `Toaster`                                     | Toast notification component (Sonner wrapper)                 |
 
 > **Skeletons**: Used as `pendingComponent` in TanStack Router, showing a transitional UI during page data requests. Themes can decide whether to implement it based on their interaction design language (for instance, to coordinate with certain enter animations, you might choose to just return `null` instead of rendering placeholders).
@@ -229,6 +230,7 @@ The theme entry file must default-export an object satisfying `ThemeComponents`,
 
 ```ts
 // src/features/theme/themes/my-theme/index.ts
+import type { SiteConfig } from "@/features/config/site-config.schema";
 import type { ThemeComponents } from "@/features/theme/contract/components";
 import { config } from "./config";
 import { PublicLayout } from "./layouts/public-layout";
@@ -240,6 +242,7 @@ import Toaster from "@/components/ui/toaster";
 
 export default {
   config,
+  getDocumentStyle: (_siteConfig: SiteConfig) => undefined,
   PublicLayout,
   AuthLayout,
   UserLayout,
@@ -249,6 +252,8 @@ export default {
   // ... remaining components
 } satisfies ThemeComponents;
 ```
+
+If your theme needs to map runtime configuration into CSS variables, such as injecting a primary hue from `siteConfig` onto `<html>`, implement `getDocumentStyle`; otherwise just return `undefined`.
 
 If any required components are missing, TypeScript will throw an error here explicitly pinpointing the missing field.
 

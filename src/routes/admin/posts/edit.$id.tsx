@@ -54,7 +54,7 @@ function EditPost() {
           <h2 className="text-4xl font-serif font-medium">
             {m.admin_post_edit_not_found_title()}
           </h2>
-          <p className="text-zinc-400 font-light text-sm">
+          <p className="text-muted-foreground font-light text-sm">
             {m.admin_post_edit_not_found_desc({ id: String(postId) })}
           </p>
         </div>

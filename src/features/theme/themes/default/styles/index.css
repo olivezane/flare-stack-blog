@@ -41,6 +41,20 @@
 
     --selection: 240 10% 3.9%;
     --selection-foreground: 0 0% 100%;
+
+    --radius: 0px;
+    --radius-sm: 0px;
+    --page-width: 80rem;
+    --sidebar-bg: var(--background);
+    --sidebar-width: 18rem;
+    --sidebar-hover-bg: transparent;
+    --sidebar-active-bg: var(--foreground);
+    --sidebar-active-text: var(--background);
+    --sidebar-active-border: var(--foreground);
+    --shadow-lg:
+      0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --separator-color: hsl(var(--border));
+    --icon-opacity: 0.3;
   }
 
   .dark {
@@ -95,12 +109,12 @@ mark {
 @theme {
   --tw-transition-duration: 0.3s;
 
-  /* Awwwards Style Font Families */
   --font-serif: "Noto Serif SC Variable", serif;
   --font-sans: "Noto Sans SC Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
-  /* Semantic Colors mapping to CSS variables */
+  --radius: 0px;
+
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-muted: hsl(var(--muted));

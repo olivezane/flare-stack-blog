@@ -117,11 +117,15 @@ export function SideBar({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-70 w-72 lg:w-64 border-r border-border/30 flex flex-col bg-background transform transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-70 border-r border-border/30 flex flex-col transform transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           isMobileSidebarOpen
             ? "translate-x-0 shadow-2xl"
             : "-translate-x-full lg:translate-x-0",
         )}
+        style={{
+          width: "var(--sidebar-width, 18rem)",
+          backgroundColor: "var(--sidebar-bg, var(--background))",
+        }}
       >
         {/* Logo Area */}
         <div className="h-20 flex items-center justify-between px-6 shrink-0 border-b border-border/30">
@@ -152,10 +156,10 @@ export function SideBar({
               {({ isActive }) => (
                 <div
                   className={cn(
-                    "flex items-center gap-4 px-4 py-3 text-[11px] font-mono transition-all border border-transparent",
+                    "flex items-center gap-4 px-4 py-3 text-[11px] font-mono transition-all border",
                     isActive
-                      ? "bg-foreground text-background border-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:border-border/30",
+                      ? "bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-text)] border-[var(--sidebar-active-border)]"
+                      : "text-muted-foreground hover:text-foreground hover:border-border/30 border-transparent hover:bg-[var(--sidebar-hover-bg)]",
                   )}
                 >
                   <item.icon size={14} strokeWidth={1.5} className="shrink-0" />

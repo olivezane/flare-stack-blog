@@ -173,7 +173,7 @@ function RouteComponent() {
           onValueChange={setActiveTab}
           className="flex flex-col lg:grid lg:grid-cols-[220px_1fr] gap-8 lg:gap-16 items-start"
         >
-          <div className="sticky top-0 z-40 w-full self-start border-b border-border/20 bg-background/96 pt-0.5 pb-2 backdrop-blur-md shadow-[0_12px_30px_-24px_rgba(15,23,42,0.55)] lg:border-b-0 lg:bg-transparent lg:pt-0 lg:pb-0 lg:backdrop-blur-none lg:shadow-none">
+          <div className="sticky top-0 z-40 w-full self-start border-b border-border/20 bg-background/96 pt-0.5 pb-2 backdrop-blur-md shadow-[var(--shadow-lg)] lg:border-b-0 lg:bg-transparent lg:pt-0 lg:pb-0 lg:backdrop-blur-none lg:shadow-none">
             <div className="overflow-x-auto no-scrollbar">
               <TabsList className="mx-auto flex w-max min-w-full flex-row justify-center rounded-2xl border border-border/25 bg-background/90 p-1.5 gap-1.5 transition-all duration-300 lg:w-full lg:min-w-0 lg:flex-col lg:justify-start lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:gap-1.5 lg:border-r lg:border-border/20 lg:pr-6">
                 {tabItems.map(({ value, icon: Icon, label }) => {

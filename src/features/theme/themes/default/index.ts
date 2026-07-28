@@ -2,6 +2,7 @@ import "./styles/index.css";
 import Toaster from "@/components/ui/toaster";
 import type { SiteConfig } from "@/features/config/site-config.schema";
 import type { ThemeComponents } from "@/features/theme/contract/components";
+import { AdminLayout } from "./components/admin-layout";
 import { config } from "./config";
 import { AuthLayout } from "./layouts/auth-layout";
 import { PublicLayout } from "./layouts/public-layout";
@@ -45,5 +46,6 @@ export default {
   ResetPasswordPage,
   VerifyEmailPage,
   ProfilePage,
+  AdminLayout,
   Toaster,
 } satisfies ThemeComponents;

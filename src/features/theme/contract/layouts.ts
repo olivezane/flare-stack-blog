@@ -37,3 +37,7 @@ export interface UserLayoutProps {
   logout: () => Promise<void>;
   children: React.ReactNode;
 }
+
+export interface AdminLayoutProps {
+  children: React.ReactNode;
+}

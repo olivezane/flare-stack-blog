@@ -16,7 +16,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "border border-border/30 bg-background p-6 flex flex-col justify-between h-32 transition-all hover:border-border/60",
+        "border border-border/30 bg-background p-6 flex flex-col justify-between h-32 transition-all hover:border-border/60 rounded-[var(--radius-sm)]",
         className,
       )}
     >

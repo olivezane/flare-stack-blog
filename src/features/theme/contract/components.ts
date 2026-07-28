@@ -1,6 +1,7 @@
 import type { SiteConfig } from "@/features/config/site-config.schema";
 import type { ThemeConfig } from "./config";
 import type {
+  AdminLayoutProps,
   AuthLayoutProps,
   PublicLayoutProps,
   UserLayoutProps,
@@ -25,6 +26,26 @@ import type {
  *
  * 每个主题的 index.ts 必须导出一个满足此接口的对象。
  * TypeScript 在编译时验证主题实现了所有必须的组件。
+ *
+ * ─── CSS 变量清单 ───
+ * 每个主题的 styles/index.css 必须定义以下 CSS 变量（含 :root 和 .dark 双模式）：
+ *
+ * 标准语义色: --background, --foreground, --muted, --muted-foreground,
+ *             --border, --input, --primary, --primary-foreground,
+ *             --secondary, --secondary-foreground, --accent, --accent-foreground,
+ *             --ring, --destructive, --warning, --info,
+ *             --selection, --selection-foreground
+ * 布局尺寸:    --radius (大圆角,默认0), --radius-sm (小圆角,默认0),
+ *             --page-width (内容区最大宽度,默认80rem)
+ * 侧栏:       --sidebar-bg, --sidebar-width (默认18rem),
+ *             --sidebar-hover-bg, --sidebar-active-bg, --sidebar-active-text,
+ *             --sidebar-active-border
+ * 装饰:       --shadow-lg, --separator-color, --icon-opacity
+ *
+ * @theme 块必须定义:
+ *   --font-serif, --font-sans, --font-mono
+ *   --color-background 等语义色映射（参考 default 或 fuwari 实现）
+ *   --radius
  */
 export interface ThemeComponents {
   /** 主题静态配置（数据获取参数等） */
@@ -87,4 +108,7 @@ export interface ThemeComponents {
 
   /** Toast 通知组件（Sonner 封装） */
   Toaster: React.ComponentType;
+
+  /** 管理后台布局（SideBar + Header + Content Area） */
+  AdminLayout: React.ComponentType<AdminLayoutProps>;
 }

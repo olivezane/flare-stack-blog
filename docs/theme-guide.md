@@ -49,6 +49,23 @@ vite.config.ts
 
 > **骨架屏（Skeleton）**：用作 TanStack Router 的 `pendingComponent`，在页面数据请求期间展示的过渡 UI。主题可以根据自身的交互设计语言自行决定是否需要实现它（例如，为了配合某些入场动画，您可以选择直接返回 `null` 而不渲染占位图）。
 
+### `AdminLayout` — 管理后台布局
+
+`AdminLayout` 是后台管理系统的根布局，所有后台页面（仪表盘、文章管理、评论管理、主题设置、站点设置等）都在此布局内渲染。它接收一个简单的 `children` prop：
+
+```ts
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
+```
+
+该布局应包含：
+- **Sidebar**：左侧导航面板，包含后台各功能入口。
+- **Header/TopBar**：顶部区域（可选），可放置搜索、用户菜单等。
+- **主内容区**：`children` 渲染的位置。
+
+> **`AdminLayout` 是一个 2025-12 新增的强制契约组件**。如果现有主题尚未实现，必须补全。缺少它会导致 `satisfies ThemeComponents` 编译报错。
+
 ### `contract/layouts.ts` — 布局 Props
 
 ```ts
@@ -393,6 +410,73 @@ export function ProfileBackground() {
 
 > **为什么不放在 `ThemeConfig` 中？** `ThemeConfig` 是编译时契约的一部分，主要用于路由 loader 的数据获取参数（如分页大小）。而图片路径、品牌文案这类站点个性化字段不属于路由数据获取参数；把它们放在 `blogConfig` 与站点配置 schema 中，既能提供默认值，也能让后台“设置”页在运行时覆盖这些值。
 
+## CSS 变量约定
+
+每个主题的 `styles/index.css` **必须**定义一组标准的 CSS 变量，否则在主题切换时会出现视觉跳跃或组件异常。
+
+### 验证脚本
+
+```bash
+bun scripts/verify-theme-css.ts
+```
+
+脚本会自动读取 `THEME` 环境变量指向的主题 CSS 文件，检查以下要求。该脚本已集成到 `bun run check` 中。
+
+### 在 `:root` 中必须定义的变量
+
+| 分类       | 变量                                                   | 说明                                  |
+| :--------- | :----------------------------------------------------- | :------------------------------------ |
+| 背景/前景  | `--background`, `--foreground`                         | 页面主体背景色与文字色                |
+| 弱化       | `--muted`, `--muted-foreground`                        | 次要信息（如列表副标题）              |
+| 弹出层     | `--popover`, `--popover-foreground`                    | 弹窗/下拉菜单背景色                   |
+| 边框/输入  | `--border`, `--input`                                  | 分割线与输入框边框                    |
+| 品牌主色   | `--primary`, `--primary-foreground`                    | 主按钮、链接等                        |
+| 次要色     | `--secondary`, `--secondary-foreground`                | 次要按钮                              |
+| 强调色     | `--accent`, `--accent-foreground`                      | 高亮元素（如选中菜单项）              |
+| 聚焦环     | `--ring`                                               | 键盘聚焦时的轮廓                      |
+| 毁灭性操作 | `--destructive`, `--destructive-foreground`            | 删除/危险操作按钮                     |
+| 警告       | `--warning`, `--warning-foreground`                    | 警告提示                              |
+| 信息       | `--info`, `--info-foreground`                          | 信息提示                              |
+| 选中高亮   | `--selection`, `--selection-foreground`                | 文本/元素选中时的背景色               |
+| 圆角       | `--radius`, `--radius-sm`                              | 大、小圆角值（默认 `0px`，无圆角）    |
+| 内容区宽度 | `--page-width`                                         | 内容区最大宽度（默认 `80rem`）        |
+| 侧栏       | `--sidebar-bg`, `--sidebar-width`, `--sidebar-hover-bg` | 后台侧栏背景、宽度、悬停背景        |
+| 侧栏选中   | `--sidebar-active-bg`, `--sidebar-active-text`, `--sidebar-active-border` | 后台侧栏选中态背景、文字、边框 |
+| 阴影装饰   | `--shadow-lg`                                           | 大阴影（卡片、弹窗）                  |
+
+> 所有颜色变量使用 **HSL 格式**（`0 0% 100%`），不含 `hsl()` 包裹。TailwindCSS `@theme` 块中通过 `hsl(var(--xxx))` 映射为 Tailwind 色板。
+
+### 在 `.dark` 中必须覆盖的变量
+
+黑暗模式只需覆盖 `:root` 的子集，其他变量复用 `:root` 定义。必须覆盖：
+
+`--foreground`, `--popover-foreground`, `--secondary`, `--secondary-foreground`, `--accent`, `--accent-foreground`, `--warning-foreground`
+
+以及所有 `:root` 中定义的其他颜色变量（`--background`, `--muted` 等）。
+
+### `@theme` 块必须定义
+
+```css
+@theme {
+  --font-serif: "Noto Serif SC Variable", serif;
+  --font-sans: "Noto Sans SC Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --radius: 0px;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  /* ... 其他所有颜色变量映射 ... */
+}
+```
+
+### 必须 import 的字体
+
+```css
+@import "@fontsource-variable/noto-sans-sc";
+@import "@fontsource-variable/noto-serif-sc";
+@import "@fontsource-variable/jetbrains-mono";
+```
+
 ## 注意事项
 
 - **不要修改 contract 文件**：契约是框架与主题之间的接口约定，业务逻辑依赖它稳定。如有新的业务需求需要暴露更多数据，请提 issue 或 PR。
@@ -400,3 +484,4 @@ export function ProfileBackground() {
 - **样式隔离**：项目采用分层样式架构：
   - `src/styles.css` — 全局公共样式（TailwindCSS 入口、dark/light variant 等），所有主题共享，**主题不应修改此文件**。
   - `themes/<your-theme>/styles/` — 主题私有样式（颜色变量、字体、排版、组件样式等），在主题 `index.ts` 中通过 `import "./styles/index.css"` 引入，确保只在该主题激活时加载。
+- **自 2025-12 起，`AdminLayout` 成为强制契约组件**，所有主题必须实现并导出。

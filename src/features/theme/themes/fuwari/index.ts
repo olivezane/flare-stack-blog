@@ -1,5 +1,6 @@
 import "./styles/index.css";
 import type { ThemeComponents } from "@/features/theme/contract/components";
+import { AdminLayout } from "./components/admin-layout";
 import { Toaster } from "./components/toaster";
 import { config } from "./config";
 import { AuthLayout } from "./layouts/auth-layout";
@@ -45,5 +46,6 @@ export default {
   ResetPasswordPage,
   VerifyEmailPage,
   ProfilePage,
+  AdminLayout,
   Toaster,
 } satisfies ThemeComponents;

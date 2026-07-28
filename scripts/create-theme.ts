@@ -41,7 +41,7 @@ function createTheme(name: string): void {
   // styles/index.css
   files.push({
     path: path.join(themeDir, "styles/index.css"),
-    content: `/* Theme: ${name} */\n@import "tailwindcss";\n@import "@/styles/shared.css";\n`,
+    content: `/* Theme: ${name} */\n@import "tailwindcss";\n@import "@/styles/shared.css";\n@import "@fontsource-variable/noto-sans-sc";\n@import "@fontsource-variable/noto-serif-sc";\n@import "@fontsource-variable/jetbrains-mono";\n\n@layer base {\n  :root {\n    --background: 0 0% 100%;\n    --foreground: 240 10% 3.9%;\n    --muted: 240 4.8% 95.9%;\n    --muted-foreground: 240 3.8% 46.1%;\n    --popover: 0 0% 100%;\n    --popover-foreground: 240 10% 3.9%;\n    --border: 240 5.9% 90%;\n    --input: 240 5.9% 90%;\n    --primary: 240 10% 3.9%;\n    --primary-foreground: 0 0% 98%;\n    --secondary: 240 4.8% 95.9%;\n    --secondary-foreground: 240 5.9% 10%;\n    --accent: 240 4.8% 95.9%;\n    --accent-foreground: 240 5.9% 10%;\n    --ring: 240 10% 3.9%;\n    --destructive: 0 84.2% 60.2%;\n    --destructive-foreground: 0 0% 98%;\n    --warning: 38 92% 50%;\n    --warning-foreground: 0 0% 100%;\n    --info: 221.2 83.2% 53.3%;\n    --info-foreground: 0 0% 100%;\n    --selection: 240 10% 3.9%;\n    --selection-foreground: 0 0% 100%;\n    --radius: 0px;\n    --radius-sm: 0px;\n    --page-width: 80rem;\n    --sidebar-bg: var(--background);\n    --sidebar-width: 18rem;\n    --sidebar-hover-bg: transparent;\n    --sidebar-active-bg: var(--foreground);\n    --sidebar-active-text: var(--background);\n    --sidebar-active-border: var(--foreground);\n    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);\n  }\n\n  .dark {\n    --background: 240 10% 3.9%;\n    --foreground: 0 0% 98%;\n    --muted: 240 3.7% 15.9%;\n    --muted-foreground: 240 5% 64.9%;\n    --popover: 240 10% 3.9%;\n    --popover-foreground: 0 0% 98%;\n    --border: 240 3.7% 15.9%;\n    --input: 240 3.7% 15.9%;\n    --primary: 0 0% 98%;\n    --primary-foreground: 240 10% 3.9%;\n    --secondary: 240 3.7% 15.9%;\n    --secondary-foreground: 0 0% 98%;\n    --accent: 240 3.7% 15.9%;\n    --accent-foreground: 0 0% 98%;\n    --ring: 240 4.9% 83.9%;\n    --destructive: 0 62.8% 30.6%;\n    --destructive-foreground: 0 0% 98%;\n    --warning: 48 96% 89%;\n    --warning-foreground: 38 92% 50%;\n    --info: 217.2 91.2% 59.8%;\n    --info-foreground: 0 0% 100%;\n    --selection: 0 0% 100%;\n    --selection-foreground: 240 10% 3.9%;\n    --foreground: 0 0% 98%;\n    --popover-foreground: 0 0% 98%;\n    --secondary: 240 3.7% 15.9%;\n    --secondary-foreground: 0 0% 98%;\n    --accent: 240 3.7% 15.9%;\n    --accent-foreground: 0 0% 98%;\n  }\n}\n\n@theme {\n  --tw-transition-duration: 0.3s;\n  --font-serif: "Noto Serif SC Variable", serif;\n  --font-sans: "Noto Sans SC Variable", system-ui, sans-serif;\n  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;\n  --radius: 0px;\n\n  --color-background: hsl(var(--background));\n  --color-foreground: hsl(var(--foreground));\n  --color-muted: hsl(var(--muted));\n  --color-muted-foreground: hsl(var(--muted-foreground));\n  --color-popover: hsl(var(--popover));\n  --color-popover-foreground: hsl(var(--popover-foreground));\n  --color-border: hsl(var(--border));\n  --color-input: hsl(var(--input));\n  --color-primary: hsl(var(--primary));\n  --color-primary-foreground: hsl(var(--primary-foreground));\n  --color-secondary: hsl(var(--secondary));\n  --color-secondary-foreground: hsl(var(--secondary-foreground));\n  --color-accent: hsl(var(--accent));\n  --color-accent-foreground: hsl(var(--accent-foreground));\n  --color-ring: hsl(var(--ring));\n  --color-destructive: hsl(var(--destructive));\n  --color-destructive-foreground: hsl(var(--destructive-foreground));\n  --color-warning: hsl(var(--warning));\n  --color-warning-foreground: hsl(var(--warning-foreground));\n  --color-info: hsl(var(--info));\n  --color-info-foreground: hsl(var(--info-foreground));\n  --color-selection: hsl(var(--selection));\n  --color-selection-foreground: hsl(var(--selection-foreground));\n}\n`,
   });
 
   // layouts
@@ -71,6 +71,16 @@ export function AuthLayout(_props: AuthLayoutProps) {
 
 export function UserLayout(_props: UserLayoutProps) {
   return <div>Placeholder: UserLayout</div>;
+}
+`,
+  });
+
+  files.push({
+    path: path.join(themeDir, "layouts/admin-layout.tsx"),
+    content: `import type { AdminLayoutProps } from "@/features/theme/contract/layouts";
+
+export function AdminLayout(_props: AdminLayoutProps) {
+  return <div>Placeholder: AdminLayout</div>;
 }
 `,
   });
@@ -205,6 +215,7 @@ import { PostPage, PostPageSkeleton } from "./pages/post";
 import { PublicLayout } from "./layouts/public-layout";
 import { AuthLayout } from "./layouts/auth-layout";
 import { UserLayout } from "./layouts/user-layout";
+import { AdminLayout } from "./layouts/admin-layout";
 import { FriendLinksPage, FriendLinksPageSkeleton } from "./pages/friend-links";
 import { SearchPage } from "./pages/search";
 import { SubmitFriendLinkPage } from "./pages/submit-friend-link";
@@ -235,6 +246,7 @@ export default {
   PublicLayout,
   AuthLayout,
   UserLayout,
+  AdminLayout,
   FriendLinksPage,
   FriendLinksPageSkeleton,
   SearchPage,

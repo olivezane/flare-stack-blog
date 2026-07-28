@@ -2,6 +2,9 @@
 @import "tailwindcss";
 @import "@/styles/shared.css";
 @import "./markdown.css";
+@import "@fontsource-variable/noto-sans-sc";
+@import "@fontsource-variable/noto-serif-sc";
+@import "@fontsource-variable/jetbrains-mono";
 @plugin "@tailwindcss/typography";
 
 @layer base {
@@ -39,6 +42,44 @@
     --fuwari-input-border: rgba(0, 0, 0, 0.1);
     --fuwari-toc-btn-hover: oklch(0.926 0.015 var(--fuwari-hue));
     --fuwari-toc-btn-active: oklch(0.9 0.015 var(--fuwari-hue));
+
+    --background: var(--fuwari-page-bg);
+    --foreground: oklch(0.15 0.01 var(--fuwari-hue));
+    --muted: var(--fuwari-btn-regular-bg);
+    --muted-foreground: var(--fuwari-btn-content);
+    --popover: var(--fuwari-card-bg);
+    --popover-foreground: oklch(0.15 0.01 var(--fuwari-hue));
+    --border: var(--fuwari-input-border);
+    --input: var(--fuwari-input-bg);
+    --primary: var(--fuwari-primary);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.9 0.02 var(--fuwari-hue));
+    --secondary-foreground: oklch(0.3 0.05 var(--fuwari-hue));
+    --accent: oklch(0.9 0.02 var(--fuwari-hue));
+    --accent-foreground: oklch(0.3 0.05 var(--fuwari-hue));
+    --ring: var(--fuwari-primary);
+    --destructive: oklch(0.6 0.2 25);
+    --destructive-foreground: oklch(1 0 0);
+    --warning: oklch(0.8 0.15 80);
+    --warning-foreground: oklch(0.15 0.01 var(--fuwari-hue));
+    --info: oklch(0.6 0.15 250);
+    --info-foreground: oklch(1 0 0);
+    --selection: var(--fuwari-selection-bg);
+    --selection-foreground: inherit;
+
+    --radius: var(--fuwari-radius-large);
+    --radius-sm: 0.375rem;
+    --page-width: var(--fuwari-page-width);
+    --sidebar-bg: var(--fuwari-card-bg);
+    --sidebar-width: 16rem;
+    --sidebar-hover-bg: var(--fuwari-btn-plain-bg-hover);
+    --sidebar-active-bg: var(--fuwari-primary);
+    --sidebar-active-text: oklch(1 0 0);
+    --sidebar-active-border: var(--fuwari-primary);
+    --shadow-lg:
+      0 10px 15px -3px oklch(0 0 0 / 0.08), 0 4px 6px -4px oklch(0 0 0 / 0.05);
+    --separator-color: var(--fuwari-meta-divider);
+    --icon-opacity: 0.5;
   }
 
   .dark {
@@ -61,7 +102,49 @@
     --fuwari-input-border: rgba(255, 255, 255, 0.1);
     --fuwari-toc-btn-hover: oklch(0.22 0.02 var(--fuwari-hue));
     --fuwari-toc-btn-active: oklch(0.25 0.02 var(--fuwari-hue));
+
+    --foreground: oklch(0.9 0.02 var(--fuwari-hue));
+    --popover-foreground: oklch(0.9 0.02 var(--fuwari-hue));
+    --secondary: oklch(0.25 0.02 var(--fuwari-hue));
+    --secondary-foreground: oklch(0.8 0.05 var(--fuwari-hue));
+    --accent: oklch(0.25 0.02 var(--fuwari-hue));
+    --accent-foreground: oklch(0.8 0.05 var(--fuwari-hue));
+    --warning-foreground: oklch(0.9 0.02 var(--fuwari-hue));
   }
+}
+
+@theme {
+  --tw-transition-duration: 0.3s;
+
+  --font-serif: "Noto Serif SC Variable", serif;
+  --font-sans: "Noto Sans SC Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --radius: var(--fuwari-radius-large);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-selection: var(--selection);
+  --color-selection-foreground: var(--selection-foreground);
 }
 
 @layer components {

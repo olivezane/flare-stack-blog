@@ -220,7 +220,7 @@ function DashboardOverview() {
           )}
 
           {/* Chart Area */}
-          <div className="h-75 w-full border border-border/30 bg-background p-6">
+          <div className="h-75 w-full border border-border/30 bg-background p-6 rounded-[var(--radius-sm)]">
             {traffic && traffic.length > 0 ? (
               <TrafficChart data={traffic} />
             ) : (
@@ -241,7 +241,7 @@ function DashboardOverview() {
             <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground">
               {m.admin_overview_top_pages_title()}
             </h2>
-            <div className="border border-border/30 bg-background p-4 space-y-4">
+            <div className="border border-border/30 bg-background p-4 space-y-4 rounded-[var(--radius-sm)]">
               {topPages && topPages.length > 0 ? (
                 topPages.slice(0, 5).map((page, i) => (
                   <div key={i} className="group">
@@ -276,7 +276,7 @@ function DashboardOverview() {
             <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground">
               {m.admin_overview_activity_title()}
             </h2>
-            <div className="border border-border/30 bg-background p-4 min-h-50">
+            <div className="border border-border/30 bg-background p-4 min-h-50 rounded-[var(--radius-sm)]">
               <div className="space-y-4">
                 {activities.length > 0 ? (
                   activities.map((log: ActivityLogItem, i: number) => {

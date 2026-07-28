@@ -1,7 +1,6 @@
 import { z } from "zod";
 import * as CacheService from "@/features/cache/cache.service";
 import * as PostRepo from "@/features/posts/data/posts.data";
-import { POSTS_CACHE_KEYS } from "@/features/posts/schema/posts.schema";
 import * as PostAutoSnapshotService from "@/features/posts/services/post-auto-snapshot.service";
 import * as TagRepo from "@/features/tags/data/tags.data";
 import type {
@@ -19,7 +18,6 @@ import {
   TagWithCountSchema,
 } from "@/features/tags/tags.schema";
 import { err, ok } from "@/lib/errors";
-import { purgeCDNCache } from "@/lib/invalidate";
 
 /**
  * Get all tags (cached)
@@ -106,48 +104,17 @@ export async function getTagsByPostId(
  * 1. 无论如何都清除 publicList（标签变动必然影响标签云）
  * 2. 如果有受影响的文章，精确失效这些文章的缓存
  * 3. 如果没有受影响的文章（可能是 DB/KV 不同步），bump 所有版本号
+ *
+ * Delegates to CacheInvalidation coordinator.
  */
 async function invalidateTagRelatedCache(
   context: DbContext,
   affectedPosts: Array<{ id: number; slug: string }>,
 ) {
-  // 1. 无论如何都清除 publicList
-  await CacheService.deleteKey(context, TAGS_CACHE_KEYS.publicList);
-
-  if (affectedPosts.length > 0) {
-    // 2. 精确失效受影响的文章
-    const tasks: Array<Promise<void>> = [];
-
-    // Bump post list version
-    tasks.push(CacheService.bumpVersion(context, "posts:list"));
-
-    // Invalidate each affected post's detail cache
-    const version = await CacheService.getVersion(context, "posts:detail");
-    for (const post of affectedPosts) {
-      tasks.push(
-        CacheService.deleteKey(
-          context,
-          POSTS_CACHE_KEYS.detail(version, post.slug),
-        ),
-      );
-    }
-
-    // Purge CDN for affected posts and list pages
-    const cdnUrls = ["/", "/posts"];
-    for (const post of affectedPosts) {
-      cdnUrls.push(`/post/${post.slug}`);
-    }
-    tasks.push(purgeCDNCache(context.env, { urls: cdnUrls }));
-
-    await Promise.all(tasks);
-  } else {
-    // 3. 保守策略：可能是 DB/KV 不同步，bump 所有版本号
-    await Promise.all([
-      CacheService.bumpVersion(context, "posts:detail"),
-      CacheService.bumpVersion(context, "posts:list"),
-      purgeCDNCache(context.env, { urls: ["/", "/posts"] }),
-    ]);
-  }
+  const { invalidateTagRelated } = await import(
+    "@/features/cache/cache-invalidation"
+  );
+  await invalidateTagRelated(context, affectedPosts);
 }
 
 export const createTag = async (context: DbContext, data: CreateTagInput) => {

@@ -5,9 +5,7 @@ import {
 } from "drizzle-zod";
 import { z } from "zod";
 import { TagsTable } from "@/lib/db/schema";
-
-// Date fields need to accept both Date objects and ISO strings (for JSON serialization)
-const coercedDate = z.union([z.date(), z.string().pipe(z.coerce.date())]);
+import { coercedDate } from "@/lib/schema-helpers";
 
 export const TagSelectSchema = createSelectSchema(TagsTable, {
   createdAt: coercedDate,

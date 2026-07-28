@@ -23,6 +23,29 @@ import { PostsTable, PostTagsTable, TagsTable } from "@/lib/db/schema";
 const DEFAULT_PAGE_SIZE = 12;
 const DEFAULT_SITEMAP_BATCH_SIZE = 500;
 
+/** Drizzle 列选择映射：通过公共端点返回的 Post 列表项。*/
+const POST_LIST_COLUMNS = {
+  id: PostsTable.id,
+  title: PostsTable.title,
+  summary: PostsTable.summary,
+  readTimeInMinutes: PostsTable.readTimeInMinutes,
+  slug: PostsTable.slug,
+  status: PostsTable.status,
+  publishedAt: PostsTable.publishedAt,
+  pinnedAt: PostsTable.pinnedAt,
+  createdAt: PostsTable.createdAt,
+  updatedAt: PostsTable.updatedAt,
+} as const;
+
+/** Drizzle 列选择映射：站点地图批次（仅元数据，不含正文内容）。*/
+const POST_SITEMAP_COLUMNS = {
+  id: PostsTable.id,
+  slug: PostsTable.slug,
+  createdAt: PostsTable.createdAt,
+  updatedAt: PostsTable.updatedAt,
+  publishedAt: PostsTable.publishedAt,
+} as const;
+
 export type SitemapPostRow = {
   id: number;
   slug: string;
@@ -59,18 +82,7 @@ export async function getPosts(
   const orderByClause = buildPostOrderByClause(sortDir, sortBy);
 
   const posts = await db
-    .select({
-      id: PostsTable.id,
-      title: PostsTable.title,
-      summary: PostsTable.summary,
-      readTimeInMinutes: PostsTable.readTimeInMinutes,
-      slug: PostsTable.slug,
-      status: PostsTable.status,
-      publishedAt: PostsTable.publishedAt,
-      pinnedAt: PostsTable.pinnedAt,
-      createdAt: PostsTable.createdAt,
-      updatedAt: PostsTable.updatedAt,
-    })
+    .select(POST_LIST_COLUMNS)
     .from(PostsTable)
     .limit(Math.min(limit, 50))
     .offset(offset)
@@ -160,21 +172,7 @@ export async function getPostsCursor(
     conditions.push(sql`${PostsTable.pinnedAt} IS NULL`);
   }
 
-  let query = db
-    .select({
-      id: PostsTable.id,
-      title: PostsTable.title,
-      summary: PostsTable.summary,
-      readTimeInMinutes: PostsTable.readTimeInMinutes,
-      slug: PostsTable.slug,
-      status: PostsTable.status,
-      publishedAt: PostsTable.publishedAt,
-      pinnedAt: PostsTable.pinnedAt,
-      createdAt: PostsTable.createdAt,
-      updatedAt: PostsTable.updatedAt,
-    })
-    .from(PostsTable)
-    .$dynamic();
+  let query = db.select(POST_LIST_COLUMNS).from(PostsTable).$dynamic();
 
   if (tagName) {
     query = query
@@ -238,13 +236,7 @@ export async function getPublishedPostsForSitemapBatch(
   const { cursor, limit = DEFAULT_SITEMAP_BATCH_SIZE } = options;
 
   return await db
-    .select({
-      id: PostsTable.id,
-      slug: PostsTable.slug,
-      createdAt: PostsTable.createdAt,
-      updatedAt: PostsTable.updatedAt,
-      publishedAt: PostsTable.publishedAt,
-    })
+    .select(POST_SITEMAP_COLUMNS)
     .from(PostsTable)
     .where(
       and(
@@ -513,18 +505,7 @@ export async function getPublicPostsByIds(db: DB, ids: Array<number>) {
   const whereClause = buildPostWhereClause({ publicOnly: true });
 
   const posts = await db
-    .select({
-      id: PostsTable.id,
-      title: PostsTable.title,
-      summary: PostsTable.summary,
-      readTimeInMinutes: PostsTable.readTimeInMinutes,
-      slug: PostsTable.slug,
-      status: PostsTable.status,
-      publishedAt: PostsTable.publishedAt,
-      pinnedAt: PostsTable.pinnedAt,
-      createdAt: PostsTable.createdAt,
-      updatedAt: PostsTable.updatedAt,
-    })
+    .select(POST_LIST_COLUMNS)
     .from(PostsTable)
     .where(and(inArray(PostsTable.id, ids), whereClause));
 

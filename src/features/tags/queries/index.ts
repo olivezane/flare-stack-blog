@@ -1,7 +1,4 @@
 import { queryOptions } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-client";
-import { isSSR } from "@/lib/utils";
-import { m } from "@/paraglide/messages";
 import {
   getTagsAdminFn,
   getTagsByPostIdFn,
@@ -28,14 +25,7 @@ export const TAGS_KEYS = {
 
 export const tagsQueryOptions = queryOptions({
   queryKey: TAGS_KEYS.public,
-  queryFn: async () => {
-    if (isSSR) {
-      return await getTagsFn();
-    }
-    const res = await apiClient.tags.$get();
-    if (!res.ok) throw new Error(m.tag_selector_load_fail());
-    return res.json();
-  },
+  queryFn: () => getTagsFn(),
 });
 
 export function tagsAdminQueryOptions(options: GetTagsInput = {}) {

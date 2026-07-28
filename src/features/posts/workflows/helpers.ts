@@ -1,24 +1,10 @@
-import * as CacheService from "@/features/cache/cache.service";
-import { POSTS_CACHE_KEYS } from "@/features/posts/schema/posts.schema";
 import * as PostService from "@/features/posts/services/posts.service";
 import * as SearchService from "@/features/search/service/search.service";
-import { TAGS_CACHE_KEYS } from "@/features/tags/tags.schema";
 import { getDb } from "@/lib/db";
-import { purgePostCDNCache } from "@/lib/invalidate";
 
 export async function fetchPost(env: Env, postId: number) {
   const db = getDb(env);
   return await PostService.findPostById({ db, env }, { id: postId });
-}
-
-export async function invalidatePostCaches(env: Env, slug: string) {
-  const version = await CacheService.getVersion({ env }, "posts:detail");
-  await Promise.all([
-    CacheService.deleteKey({ env }, POSTS_CACHE_KEYS.detail(version, slug)),
-    purgePostCDNCache(env, slug),
-    CacheService.bumpVersion({ env }, "posts:list"),
-    CacheService.deleteKey({ env }, TAGS_CACHE_KEYS.publicList),
-  ]);
 }
 
 export async function upsertPostSearchIndex(

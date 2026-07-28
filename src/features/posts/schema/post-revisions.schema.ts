@@ -9,9 +9,8 @@ import {
   POST_STATUSES,
   PostRevisionsTable,
 } from "@/lib/db/schema";
+import { coercedDate } from "@/lib/schema-helpers";
 import { NullableJsonContentSchema } from "./json-content.schema";
-
-const coercedDate = z.union([z.date(), z.string().pipe(z.coerce.date())]);
 
 export const PostRevisionSnapshotSchema = z.object({
   title: z.string(),

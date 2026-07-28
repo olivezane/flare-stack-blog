@@ -7,9 +7,7 @@ import { z } from "zod";
 import { JsonContentSchema } from "@/features/posts/schema/json-content.schema";
 import type { CommentStatus } from "@/lib/db/schema";
 import { CommentsTable } from "@/lib/db/schema";
-
-// Date fields need to accept both Date objects and ISO strings (for JSON serialization)
-const coercedDate = z.union([z.date(), z.string().pipe(z.coerce.date())]);
+import { coercedDate } from "@/lib/schema-helpers";
 
 export const CommentSelectSchema = createSelectSchema(CommentsTable, {
   createdAt: coercedDate,

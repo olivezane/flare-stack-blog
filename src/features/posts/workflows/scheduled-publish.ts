@@ -3,7 +3,6 @@ import { WorkflowEntrypoint } from "cloudflare:workers";
 import { toUTCMidnight } from "@/features/posts/utils/date";
 import {
   fetchPost,
-  invalidatePostCaches,
   upsertPostSearchIndex,
 } from "@/features/posts/workflows/helpers";
 
@@ -28,7 +27,10 @@ export class ScheduledPublishWorkflow extends WorkflowEntrypoint<Env, Params> {
     if (!post || post.status !== "published") return;
 
     await step.do("invalidate caches", async () => {
-      await invalidatePostCaches(this.env, post.slug);
+      const { invalidatePost } = await import(
+        "@/features/cache/cache-invalidation"
+      );
+      await invalidatePost({ env: this.env }, post.slug);
     });
 
     await step.do("update search index", async () => {

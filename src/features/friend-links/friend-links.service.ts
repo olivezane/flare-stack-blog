@@ -1,8 +1,8 @@
 import * as CacheService from "@/features/cache/cache.service";
+import { invalidateFriendLinks } from "@/features/cache/cache-invalidation";
 import { publishNotificationEvent } from "@/features/notification/service/notification.publisher";
 import { serverEnv } from "@/lib/env/server.env";
 import { err, ok } from "@/lib/errors";
-import { purgeCDNCache } from "@/lib/invalidate";
 import * as FriendLinkRepo from "./data/friend-links.data";
 import type {
   ApproveFriendLinkInput,
@@ -92,19 +92,6 @@ export async function getApprovedFriendLinks(
 
 // ============ Admin Methods ============
 
-function invalidateCache(
-  context: DbContext & { executionCtx: ExecutionContext },
-) {
-  context.executionCtx.waitUntil(
-    Promise.all([
-      CacheService.bumpVersion(context, "friend-links:list"),
-      purgeCDNCache(context.env, {
-        urls: ["/friend-links"],
-      }),
-    ]),
-  );
-}
-
 export async function createFriendLink(
   context: DbContext & { executionCtx: ExecutionContext },
   data: CreateFriendLinkInput,
@@ -119,7 +106,7 @@ export async function createFriendLink(
     status: "approved",
   });
 
-  invalidateCache(context);
+  context.executionCtx.waitUntil(invalidateFriendLinks({ env: context.env }));
 
   return friendLink;
 }
@@ -159,7 +146,7 @@ export async function approveFriendLink(
     rejectionReason: null,
   });
 
-  invalidateCache(context);
+  context.executionCtx.waitUntil(invalidateFriendLinks({ env: context.env }));
 
   // Notify submitter if contactEmail exists
   if (friendLink.contactEmail) {
@@ -195,7 +182,7 @@ export async function rejectFriendLink(
   });
 
   if (friendLink.status === "approved") {
-    invalidateCache(context);
+    context.executionCtx.waitUntil(invalidateFriendLinks({ env: context.env }));
   }
 
   // Notify submitter if contactEmail exists
@@ -234,7 +221,7 @@ export async function updateFriendLink(
   );
 
   if (friendLink.status === "approved") {
-    invalidateCache(context);
+    context.executionCtx.waitUntil(invalidateFriendLinks({ env: context.env }));
   }
 
   return ok(updated);
@@ -255,7 +242,7 @@ export async function deleteFriendLink(
   await FriendLinkRepo.deleteFriendLink(context.db, data.id);
 
   if (friendLink.status === "approved") {
-    invalidateCache(context);
+    context.executionCtx.waitUntil(invalidateFriendLinks({ env: context.env }));
   }
 
   return ok({ success: true });

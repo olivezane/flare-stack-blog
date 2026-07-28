@@ -6,11 +6,7 @@ import type {
 import {
   normalizePostTagName,
   PostItemSchema,
-  PostListResponseSchema,
-  PostWithTocSchema,
 } from "@/features/posts/schema/posts.schema";
-import { apiClient } from "@/lib/api-client";
-import { isSSR } from "@/lib/utils";
 import {
   getPostRevisionFn,
   listPostRevisionsFn,
@@ -63,15 +59,8 @@ export function recentPostsQuery(limit: number) {
   return queryOptions({
     queryKey: [...POSTS_KEYS.recent, limit],
     queryFn: async () => {
-      if (isSSR) {
-        const result = await getPostsCursorFn({ data: { limit } });
-        return result.items;
-      }
-      const res = await apiClient.posts.$get({
-        query: { limit: String(limit) },
-      });
-      if (!res.ok) throw new Error("Failed to fetch posts");
-      return PostListResponseSchema.parse(await res.json()).items;
+      const result = await getPostsCursorFn({ data: { limit } });
+      return result.items;
     },
   });
 }
@@ -84,24 +73,13 @@ export function postsInfiniteQueryOptions(
   return infiniteQueryOptions({
     queryKey: POSTS_KEYS.list({ ...filters, tagName }),
     queryFn: async ({ pageParam }) => {
-      if (isSSR) {
-        return await getPostsCursorFn({
-          data: {
-            cursor: pageParam,
-            limit: pageSize,
-            tagName,
-          },
-        });
-      }
-      const res = await apiClient.posts.$get({
-        query: {
-          cursor: pageParam?.toString(),
-          limit: String(pageSize),
+      return await getPostsCursorFn({
+        data: {
+          cursor: pageParam,
+          limit: pageSize,
           tagName,
         },
       });
-      if (!res.ok) throw new Error("Failed to fetch posts");
-      return PostListResponseSchema.parse(await res.json());
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     initialPageParam: undefined as number | undefined,
@@ -112,12 +90,7 @@ export function postBySlugQuery(slug: string) {
   return queryOptions({
     queryKey: POSTS_KEYS.detail(slug),
     queryFn: async () => {
-      if (isSSR) {
-        return await findPostBySlugFn({ data: { slug } });
-      }
-      const res = await apiClient.post[":slug"].$get({ param: { slug } });
-      if (!res.ok) throw new Error("Failed to fetch post");
-      return PostWithTocSchema.parse(await res.json());
+      return await findPostBySlugFn({ data: { slug } });
     },
   });
 }
@@ -133,22 +106,13 @@ export function relatedPostsQuery(slug: string, limit?: number) {
   return queryOptions({
     queryKey: POSTS_KEYS.related(slug, limit),
     queryFn: async () => {
-      if (isSSR) {
-        return await getRelatedPostsFn({ data: { slug, limit } });
-      }
-      const res = await apiClient.post[":slug"].related.$get({
-        param: { slug },
-        query: { limit: limit != null ? String(limit) : undefined },
-      });
-      if (!res.ok) throw new Error("Failed to fetch related posts");
-      const json = await res.json();
-      const result = PostItemSchema.array().safeParse(json);
+      const posts = await getRelatedPostsFn({ data: { slug, limit } });
+      const result = PostItemSchema.array().safeParse(posts);
       if (!result.success) {
         console.error(
           JSON.stringify({
             message: "related posts response parse failed",
             error: result.error.message,
-            received: typeof json,
           }),
         );
         return [];

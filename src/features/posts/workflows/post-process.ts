@@ -8,7 +8,6 @@ import { highlightCodeBlocks } from "@/features/posts/utils/content";
 import { calculatePostHash } from "@/features/posts/utils/sync";
 import {
   fetchPost,
-  invalidatePostCaches,
   upsertPostSearchIndex,
 } from "@/features/posts/workflows/helpers";
 import * as SearchService from "@/features/search/service/search.service";
@@ -122,7 +121,10 @@ export class PostProcessWorkflow extends WorkflowEntrypoint<Env, Params> {
 
     // 5. Invalidate caches
     await step.do("invalidate caches", async () => {
-      await invalidatePostCaches(this.env, updatedPost.slug);
+      const { invalidatePost } = await import(
+        "@/features/cache/cache-invalidation"
+      );
+      await invalidatePost({ env: this.env }, updatedPost.slug);
     });
 
     // 6. Update sync hash in KV
@@ -160,11 +162,11 @@ export class PostProcessWorkflow extends WorkflowEntrypoint<Env, Params> {
     });
 
     await step.do("invalidate caches", async () => {
-      await invalidatePostCaches(this.env, post.slug);
-      await CacheService.deleteKey(
-        { env: this.env },
-        POSTS_CACHE_KEYS.syncHash(postId),
+      const { invalidatePost, invalidateSyncHash } = await import(
+        "@/features/cache/cache-invalidation"
       );
+      await invalidatePost({ env: this.env }, post.slug);
+      await invalidateSyncHash({ env: this.env }, postId);
     });
   }
 }

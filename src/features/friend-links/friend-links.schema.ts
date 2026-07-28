@@ -2,8 +2,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { FriendLinksTable } from "@/lib/db/schema";
 import type { Messages } from "@/lib/i18n";
-
-const coercedDate = z.union([z.date(), z.string().pipe(z.coerce.date())]);
+import { coercedDate } from "@/lib/schema-helpers";
 
 export const FriendLinkSelectSchema = createSelectSchema(FriendLinksTable, {
   createdAt: coercedDate,

@@ -3,12 +3,12 @@
     "target": "ES2022",
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "baseUrl": ".",
     "module": "ESNext",
     /* Bundler mode */
     "moduleResolution": "bundler",
     "paths": {
       "@/*": ["./src/*"],
+      "tests/*": ["./tests/*"],
       "@theme": ["./src/features/theme/themes/default"],
       "@theme/*": ["./src/features/theme/themes/default/*"]
     },
@@ -30,5 +30,8 @@
     "**/*.tsx",
     "./worker-configuration.d.ts",
     ".release-it.ts"
+  ],
+  "exclude": [
+    "scripts/prune-unused-translations.ts"
   ]
 }

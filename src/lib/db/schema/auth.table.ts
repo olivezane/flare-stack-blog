@@ -50,6 +50,9 @@ export const account = sqliteTable(
     id: text("id").primaryKey(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
+    // better-auth 1.7 scopes account identity by issuer
+    // (https://better-auth.com/docs/guides/1-7-upgrade-guide#account-identity-is-scoped-by-issuer)
+    issuer: text("issuer"),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

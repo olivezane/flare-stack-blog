@@ -21,3 +21,5 @@ docs/superpowers/
 .cache/
 *.tsbuildinfo
 .fallow
+docs/adr/
+.scratch/
